@@ -1,3 +1,5 @@
+--Copyright (C) 2014  Wuerfel_21
+--Find license in license.txt
 local component = require("component")
 local fs = require("filesystem")
 local term = require("term")
