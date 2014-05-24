@@ -54,17 +54,20 @@ fs.mount(fromstr,"/tmp/from/")
 fs.mount(tostr,"/tmp/to/")
 
 local function cpdir(dir)
+  print("dir:",dir)
   for k,v in pairs(from.list(dir)) do
+    print("processing:",k,v)
     if type(v) == "number" then return nil end
-    if from.isDirectory(v) then
-      cpdir(v)
+    if from.isDirectory(dir..v) then
+      print("mkdir:",dir..v,to.makeDirectory(dir..v))
+      cpdir(dir..v)
     else
-      fs.copy("/tmp/from/"..dir..v,"/tmp/to/"..dir)
+      print("cp:",fs.copy("/tmp/from/"..dir..v,"/tmp/to/"..dir..v))
     end 
   end
 end
 
-cpdir("")
+cpdir("/")
 fs.umount("/tmp/from/")
 fs.umount("/tmp/to/")
 print("Plundred!")
