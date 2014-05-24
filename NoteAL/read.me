@@ -1,0 +1,50 @@
+NoteAL readme file 1.0
+Congratulations to your purchase,theft,or pirate of NoteAL!
+Please find useage instructions below:
+
+For Users:
+As this document could fall in noob-hands, here a step-by-step manual to get started:
+1. craft, buy, or steal 10 note blocks, 
+  10 adpapters, and 10 instrument
+  10 instrument  materials(2 of each kind):
+    Wool for piano
+    Glowstone for click
+    Stone for drum
+    Wood for Bass
+    Soulsand for snare
+      Note these are only recommended materials, others may work as well
+2. place down the materials left and right from you, like this:
+
+  1   1
+  2   2
+  3 P 3
+  4   4
+  5   5
+
+  then place a noteblock above each and place a adapter next to each(noteblock)
+  Check if there is a block above any noteblock, and if yes remove it.
+  Now connect the Adapters to your computer.
+3.Now craft, buy or steal a Analyzer. Now run "noteconf" on your computer,
+  and it should ask for adresses of specific note blocks. Read them out
+  using the Analyzer and enter the first 3 characters of the adress.
+4.Have Fun!
+
+For Developers:
+You want to use NoteAL? Good! The first step is to include it using
+noteal = require("noteal.noteal")
+If you want to make NoteAL optional check if its there using
+fs.exists("/lib/noteal")
+To play a note you do
+noteal.trigger(instrument,right,left,note)
+  instument is the instrument to play, either as a number or as a string.
+  Find a conversion table below:
+    0 piano
+    1 bass
+    2 drum
+    3 snare
+    4 click
+  right and left are booleans wether to play it on the right and the left noteblock
+  note is the usual noteblock note
+To get the version as a string read out
+noteal.confutil.version
+That's it!

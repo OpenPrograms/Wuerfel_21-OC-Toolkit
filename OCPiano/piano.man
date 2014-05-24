@@ -1,0 +1,23 @@
+NAME
+  piano - play piano
+
+SYNOPSIS
+  piano [instrument]
+
+DESCRIPTION
+Lets you play piano on your Noteblock using your keyboard
+If you dont have a Noteblock it will use the Crappy-PC-Speaker
+If you want to use NoteAL(sold seperatly) you need to give an instrument
+
+OPTIONS
+  -y
+    Run in QWERTY-MODE
+  -z
+    Run in QWERTZ-MODE
+
+EXAMPLES
+  piano -y
+    Starts piano in QWERTY-MODE
+
+  piano -z bass
+    Starts piano in QWERTZ-MODE using NoteAL, playing the bass

@@ -1,0 +1,12 @@
+NAME
+  floppypirate - copy entire floppys(works on hard disks too)
+
+SYNOPSI
+  floppypirate FROM TO
+
+DESCRIPTION
+  Copys entire floppys including labels
+
+EXAMPLES
+  floppypirate 000 001
+    copys floppy with adress 000 to floppy with adress 001
