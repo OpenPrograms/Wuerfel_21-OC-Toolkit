@@ -16,23 +16,58 @@
 
 local confutil = require("noteal.confutil")
 local component = require("component")
+local shell = require("shell")
 print("Welcome to noteconf the NoteAL configuration tool!")
 print("NoteAL version "..confutil.version.." enabled!")
 print("Enter (short) adress of the noteblock you want to assign, leave blank if you dont have this noteblock")
 local conf = confutil.rcon("noteal")
+local args,options = shell.parse(...)
 local valid = false
 local foo
 local bar
 
-if not conf then
+if options.c then
+conf = {computronics = true,left = "",right = ""}
+
+while not valid do
+print("left:")
+local foo = io.read()
+foo,bar = component.get(foo,"iron_noteblock")
+if foo then
+component.proxy(foo).playNote(5,12)
+conf.left = foo
+valid = true
+else
+print(bar)
+end
+end
+valid = false
+
+while not valid do
+print("right:")
+local foo = io.read()
+foo,bar = component.get(foo,"iron_noteblock")
+if foo then
+component.proxy(foo).playNote(5,12)
+conf.right = foo
+valid = true
+else
+print(bar)
+end
+end
+valid = false
+
+confutil.wcon("noteal",conf)
+print("Completed!")
+else
 conf = {
+computronics = true,
 piano = {left = "",right = ""},
 bass = {left = "",right = ""},
 drum = {left = "",right = ""},
 snare = {left = "",right = ""},
 click = {left = "",right = ""}
 }
-end
 
 while not valid do
 print("left piano:")
@@ -186,3 +221,4 @@ valid = false
 
 confutil.wcon("noteal",conf)
 print("Completed!")
+end
