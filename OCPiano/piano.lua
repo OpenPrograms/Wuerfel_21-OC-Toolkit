@@ -69,7 +69,7 @@ local function MakeTheMagicHappen() --Fill MagicTable with keybindings
   MagicTable[keys["g"]] = 25
 end
 
-if fs.exists("/lib/noteal") and args[1] then
+if fs.exists("/usr/lib/noteal") and args[1] then
   --we have NoteAL!
   noteal = require("noteal.noteal")
   mode = "noteal"
