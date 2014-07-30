@@ -1,12 +1,7 @@
 --Copyright (C) 2014  Wuerfel_21
 --Find license in license.txt
-local component = require("component")
-local fs = require("filesystem")
-local term = require("term")
 local shell = require("shell")
-local proxy = ...
-fs.mount(proxy,"/lib/noteal")
-local confutil = require("noteal.confutil") --requireing after mounting it in the right place
+local confutil = require("noteal.confutil")
 print("\nNoteAL loader by Wuerfel_21")
 print("NoteAL "..confutil.version.." mounted in /lib/noteal!")
 print("If you want to use NoteAL run \"notehelp\" to get more informtion")

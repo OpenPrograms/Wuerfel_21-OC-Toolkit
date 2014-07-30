@@ -19,7 +19,7 @@ local component = require("component")
 local shell = require("shell")
 print("Welcome to noteconf the NoteAL configuration tool!")
 print("NoteAL version "..confutil.version.." enabled!")
-print("Enter (short) adress of the noteblock you want to assign, leave blank if you dont have this noteblock")
+print("Enter (short) adress of the noteblock you want to assign")
 local conf = confutil.rcon("noteal")
 local args,options = shell.parse(...)
 local valid = false

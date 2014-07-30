@@ -32,8 +32,8 @@ end
 
 local function triggercomputronics(instrument,left,right,note)
 checkArg(1,instrument,"string","number")
-checkArg(2,left,"boolean")
-checkArg(3,right,"boolean")
+checkArg(2,left,"boolean","number")
+checkArg(3,right,"boolean","number")
 checkArg(4,note,"number")
 if instrument == "piano" then instrument = 0
 elseif instrument == "drum" then instrument = 1
