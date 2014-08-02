@@ -43,8 +43,8 @@ elseif instrument == "bass" then instrument = 4
 elseif instrument == "pling" then instrument = 5
 elseif instrument == "bass2" then instrument = 6
 end
-if left then blocks.left.playNote(instrument,note -1) end
-if right then blocks.right.playNote(instrument,note -1) end
+if left == true or left == 1 then blocks.left.playNote(instrument,note -1) end
+if right == true or right == 1 then blocks.right.playNote(instrument,note -1) end
 end
 
 local function triggervanilla(instrument,left,right,note)
