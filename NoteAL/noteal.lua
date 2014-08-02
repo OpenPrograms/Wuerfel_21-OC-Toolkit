@@ -61,8 +61,8 @@ elseif instrument == 5 or instrument == "pling" then target = blocks.piano
 elseif instrument == 6 or instrument == "bass2" then target = blocks.bass
 else error("invalid instrument")
 end
-if left then target.left.trigger(note) end
-if right then target.right.trigger(note) end
+if left == true or left == 1 then target.left.trigger(note) end
+if right == true or right == 1 then target.right.trigger(note) end
 end
 
 local function trigger(instrument,left,right,note)
