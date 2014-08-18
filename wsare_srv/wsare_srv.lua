@@ -29,18 +29,18 @@ else
   error("No modem detected!!!\nCan't start!")
 end
 
-if #args and modem.isWireless() and tonumber(args[1]) <= 400 then
+if #args and modem.isWireless() and tonumber(args[1]) then
   modem.setStrength(tonumber(args[1]))
 end
 
 local function onModemMessage(_,_,client,_,_,instruction,request)
   if not instruction == "file" then return end
   io.write("Got request!",client,request,"\n")
-  request = shell.getWorkingDirectory().."data/"..request
+  local request = shell.getWorkingDirectory().."data/"..request
   if (not fs.exists(request)) or fs.isDirectory(request) then
     return
   end
-  file = io.open(request)
+  local file = io.open(request)
   local i = ""
   while i do
     i = file:read(modem.maxPacketSize())
@@ -51,6 +51,9 @@ local function onModemMessage(_,_,client,_,_,instruction,request)
 end
 
 io.write("WsarE server v0.0.1 - find license in license.txt\nmodem on "..modem.address.."\n")
+local f = io.open(shell.getWorkingDirectory().."modem.addr","w")
+if f then f:write(modem.address) f:close() end
+
 
 modem.open(42)
 
