@@ -11,6 +11,10 @@ SYNOPSIS
 DESCRIPTION
   This program connects to wsare servers to run applications stored on them in a sandbox envirovement
 
+OPTIONS
+  -a
+    use addresses instead of snl services
+
 EXAMPLES
   wsare sangarskittyserver
     Connects to a server called "sangarskittyserver" and runs the default file

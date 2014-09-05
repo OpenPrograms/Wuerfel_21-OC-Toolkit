@@ -46,7 +46,7 @@ if #args == 0 then
   print("╠═══════════════════════════════════════╣")
   print("║©2014 Wuerfel_21                       ║")
   print("║Distrubuted under the GNU LGPL v2.1    ║")
-  print("║hint: read the manpage!(NYI)           ║")
+  print("║hint: read the manpage!                ║")
   print("╚═══════════════════════════════════════╝")
   gpu.setForeground(fg)
   gpu.setBackground(bg)
