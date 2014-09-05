@@ -21,6 +21,7 @@ local term = require("term")
 local serialization = require("serialization")
 local keyboard = require("keyboard")
 local event = require("event")
+local snl_clt = require("snl_clt")
 local noteal
 if fs.isDirectory("/usr/lib/noteal") then
   noteal = require("noteal.noteal")
@@ -31,23 +32,26 @@ local appenv = {}
 local capp = function() print ("this shouldn't happen") end
 local vesion = {stage = "alpha", major = 0, minor = 1, brand = "W21_default"}
 local args,options = shell.parse(...)
-local addr = args[1]
-
-if #args == 0 then
-  print("╔═══════════════════════════════════════╗")
-  print("║WsarE alpha v0.1                       ║")
-  print("╠═══════════════════════════════════════╣")
-  print("║Useage: wsare [address] <file>         ║")
-  print("║                                       ║")
-  print("║hint: read the manpage!(NYI)           ║")
-  print("╚═══════════════════════════════════════╝")
-  return "hehe"
-elseif #args == 1 then
-  args[2] = "default.lua"
-end
+local addr,file
 
 local modem = component.modem
 local gpu = component.gpu
+
+if #args == 0 then
+  local fg,bg = gpu.getForeground(),gpu.getBackground()
+  gpu.setForeground(bg)
+  gpu.setBackground(fg)
+  print("╔═══════════════════════════════════════╗")
+  print("║WsarE alpha v0.1                       ║")
+  print("╠═══════════════════════════════════════╣")
+  print("║©2014 Wuerfel_21                       ║")
+  print("║Distrubuted under the GNU LGPL v2.1    ║")
+  print("║hint: read the manpage!(NYI)           ║")
+  print("╚═══════════════════════════════════════╝")
+  gpu.setForeground(fg)
+  gpu.setBackground(bg)
+  return "hehe"
+end
 
 modem.open(42)
 
@@ -63,23 +67,25 @@ end
 
 local function runrfile(address,file,reset)
   if reset == true then
-    resetaenv()
+    resetaenv(address,file)
   end
   local tmp = request(address,"file",file)
-  capp = load(tmp,tmp,t,appenv)
+  capp,bla = load(tmp,tmp,t,appenv)
   capp()
 end
 
-resetaenv = function()
+resetaenv = function(add,fil)
   appenv = {
     wsare = {
       request = request,
       runrfile = runrfile,
-      addr = addr,
+      addr = add,
+      file = fil,
       version = version,
       options = options,
       },
     noteal = noteal,
+    snl_clt = snl_clt,
     term = term,
     modem = modem,
     gpu = gpu,
@@ -104,5 +110,14 @@ resetaenv = function()
     }
 end
 
-runrfile(addr,args[2],true)
+if options.a then
+  runrfile(args[1],args[2] or "default.lua",true)
+else
+  addr,file = snl_clt.getservice(args[1],args[3] or "wsare")
+  if addr == nil then 
+    error("invalid hostname or service!",0)
+  end
+  file = args[2] or file or "default.lua"
+  runrfile(addr,file,true)
+end
 modem.close(42)

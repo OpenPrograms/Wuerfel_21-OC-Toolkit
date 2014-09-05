@@ -19,6 +19,7 @@ local event = require("event")
 local fs = require("filesystem")
 local shell = require("shell")
 local keyboard = require("keyboard")
+local snl_srv
 
 
 local args,options = shell.parse(...)
@@ -33,7 +34,8 @@ if #args and modem.isWireless() and tonumber(args[1]) then
   modem.setStrength(tonumber(args[1]))
 end
 
-local function onModemMessage(_,_,client,_,_,instruction,request)
+local function onModemMessage(_,_,client,port,_,instruction,request)
+  if port ~= 42 then return end
   if not instruction == "file" then return end
   io.write("Got request!",client,request,"\n")
   local request = shell.getWorkingDirectory().."data/"..request
@@ -54,16 +56,21 @@ io.write("WsarE server v0.0.1 - find license in license.txt\nmodem on "..modem.a
 local f = io.open(shell.getWorkingDirectory().."modem.addr","w")
 if f then f:write(modem.address) f:close() end
 
-
+if options.s then
+  snl_srv = require("snl_srv")
+  snl_srv.addService("wsare")
+end
 modem.open(42)
 
 event.listen("modem_message",onModemMessage)
+
 
 while true do
   event.pull()
   if keyboard.isControlDown() then
     event.ignore("modem_message",onModemMessage)
     modem.close(42)
+    if options.s then snl_srv.shutdown() end
     return "derp"
   end
 end

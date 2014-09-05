@@ -1,0 +1,19 @@
+NAME
+  wsare - run applications from wsare servers
+  
+SYNOPSIS
+  wsare HOSTNAME
+  wsare HOSTNAME FILENAME
+  wsare HOSTNAME FILENAME SERVICE
+  wsare -a ADDRESS
+  wsare -a ADDRESS FILENAME
+
+DESCRIPTION
+  This program connects to wsare servers to run applications stored on them in a sandbox envirovement
+
+EXAMPLES
+  wsare sangarskittyserver
+    Connects to a server called "sangarskittyserver" and runs the default file
+
+  wsare -a 9bee0a60-b3b6-429b-a924-9e501e66490c nomnom.lua
+    Connects to a server at address "9bee0a60-b3b6-429b-a924-9e501e66490c" and runs file "nomnom.lua"
