@@ -67,7 +67,7 @@ event.listen("modem_message",onModemMessage)
 
 while true do
   event.pull()
-  if keyboard.isControlDown() then
+  if keyboard.isControlDown() and keyboard.isKeyDown(keyboard.keys.c) then
     event.ignore("modem_message",onModemMessage)
     modem.close(42)
     if options.s then snl_srv.shutdown() end
