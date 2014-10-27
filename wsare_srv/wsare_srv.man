@@ -3,12 +3,10 @@ NAME
 
 SYNOPSIS
   wsare_srv
-  wsare_srv STRENGTH
   wsare_srv -s
-  wsare_srv -s STRENGTH
 
 DESCRIPTION
-  This program serves wsare applications to wsare clients from a folser "data" in the working directory
+  This program serves wsare applications to wsare clients
 
 OPTIONS
   -s
@@ -17,6 +15,3 @@ OPTIONS
 EXAMPLES
   wsare_srv -s
     starts the server with an snl service set up
-
-  wsare_srv 200
-    starts the server and sets wireless strength to 200

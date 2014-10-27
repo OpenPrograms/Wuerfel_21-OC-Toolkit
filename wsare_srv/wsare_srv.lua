@@ -22,63 +22,102 @@
 --OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 --OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+local version = "v1.0.0"
+
 local component = require("component")
+local dispenser = require("dispenser")
 local event = require("event")
 local fs = require("filesystem")
-local shell = require("shell")
 local keyboard = require("keyboard")
+local serialization = require("serialization")
+local shell = require("shell")
 local snl_srv
 
-
 local args,options = shell.parse(...)
-local modem
-if component.isAvailable("modem") then
-  modem = component.modem
-else
-  error("No modem detected!!!\nCan't start!")
-end
-
-if #args and modem.isWireless() and tonumber(args[1]) then
-  modem.setStrength(tonumber(args[1]))
-end
-
-local function onModemMessage(_,_,client,port,_,instruction,request)
-  if port ~= 42 then return end
-  if not instruction == "file" then return end
-  io.write("Got request!",client,request,"\n")
-  local request = shell.getWorkingDirectory().."data/"..request
-  if (not fs.exists(request)) or fs.isDirectory(request) then
-    return
-  end
-  local file = io.open(request)
-  local i = ""
-  while i do
-    i = file:read(modem.maxPacketSize())
-    modem.send(client,42,i)
-  end
-  file:close()
-  io.write("request finished!\n")
-end
-
-io.write("WsarE server v0.0.1\nmodem on "..modem.address.."\n")
-local f = io.open(shell.getWorkingDirectory().."modem.addr","w")
-if f then f:write(modem.address) f:close() end
 
 if options.s then
   snl_srv = require("snl_srv")
   snl_srv.addService("wsare")
 end
-modem.open(42)
 
-event.listen("modem_message",onModemMessage)
+local whome = os.getenv("WSARE_HOME") or "/usr/wsare/"
+local wdata,wplugins = os.getenv("WSARE_DATA") or whome.."data/",os.getenv("WSARE_PLUGINS") or whome.."plugins/"
 
+local plugins = {}
+local listeners = {}
 
-while true do
-  event.pull()
-  if keyboard.isControlDown() and keyboard.isKeyDown(keyboard.keys.c) then
-    event.ignore("modem_message",onModemMessage)
-    modem.close(42)
-    if options.s then snl_srv.shutdown() end
-    return "derp"
+--Loading plugins
+local function addListener(event,listener)
+  if not listeners[event] then listeners[event] = {} end
+  table.insert(listeners[event],listener)
+end
+
+local function addPlugin(func,name,...)
+  plugins[name] = func
+  for k,v in ipairs(table.pack(...)) do
+    addListener(v,name)
   end
 end
+
+for file in fs.list(wplugins) do
+  local path = wplugins..file
+  if not fs.isDirectory(path) then
+    local raw,reason = loadfile(path)
+    if not raw then error(reason) end
+    local func = raw()
+    addPlugin(func,func("init",version,plugins,whome,wdata,wplugins))
+  end
+end
+
+local function handleFeedback(feed,...)
+  local args = table.pack(...)
+  if feed == "answer" then
+    local pos = 1
+    while true do
+      local s = string.sub(args[2],pos,pos+dispenser.maxPacketSize()-1)
+      if s == "" then
+        dispenser.send(args[1],42,nil)
+        break
+      else
+        dispenser.send(args[1],42,s)
+        pos = pos + dispenser.maxPacketSize()
+      end
+    end
+  elseif feed == "tell" then
+    dispatchSignal(...)
+  elseif feed == "print" then
+    print(...)
+  elseif feed == "nop" then
+    --Play him off, Keyboard Cat!
+  end
+end
+
+local function dispatchSignal(plugin,...)
+  handleFeedback(plugins[plugin](...))
+end
+
+local function dispatchToAll(...)
+  for k in pairs(plugins) do
+    dispatchSignal(k,...)
+  end
+end
+
+local function handleEvent(name,linked,sender,port,distance,...)
+  if name == "dispenser" and port == 42 then
+    dispatchToAll("request",sender,distance,...)
+  elseif listeners[name] then
+    for k,v in ipairs(listeners[name]) do
+      dispatchSignal(v,"event",name,linked,sender,port,distance,...)
+    end
+  end
+end
+
+--main loop
+dispenser.open(42)
+io.write("WsarE server "..version.."\n")
+while not (keyboard.isControlDown() and keyboard.isKeyDown(keyboard.keys.c)) do
+  handleEvent(event.pull())
+end
+dispatchToAll("kill")
+dispenser.close(42)
+if options.s then snl_srv.shutdown() end

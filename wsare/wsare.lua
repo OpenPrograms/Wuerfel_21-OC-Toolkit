@@ -30,6 +30,7 @@ local serialization = require("serialization")
 local keyboard = require("keyboard")
 local event = require("event")
 local snl_clt = require("snl_clt")
+local dispenser = require("dispenser")
 local noteal
 if fs.isDirectory("/usr/lib/noteal") then
   noteal = require("noteal.noteal")
@@ -42,7 +43,6 @@ local vesion = {stage = "alpha", major = 0, minor = 1, brand = "W21_default"}
 local args,options = shell.parse(...)
 local addr,file
 
-local modem = component.modem
 local gpu = component.gpu
 
 if #args == 0 then
@@ -61,13 +61,13 @@ if #args == 0 then
   return "hehe"
 end
 
-modem.open(42)
+dispenser.open(42)
 
 local function request(address,reqtype,...)
-  modem.send(address,42,reqtype,...)
+  dispenser.send(address,42,reqtype,...)
   local str = ""
   repeat
-    local _,_,_,_,_,tmp = event.pull("modem",_,_,42)
+    local _,_,_,_,_,tmp = event.pull("dispenser",_,address,42)
     if type(tmp) == "string" then str = str..tmp end
   until tmp == nil
   return str
@@ -92,10 +92,11 @@ resetaenv = function(add,fil)
       version = version,
       options = options,
       },
+    dispenser = dispenser,
     noteal = noteal,
     snl_clt = snl_clt,
     term = term,
-    modem = modem,
+    modem = dispenser.hardware.modem,
     gpu = gpu,
     event = event,
     keyboard = keyboard,
@@ -128,4 +129,4 @@ else
   file = args[2] or file or "default.lua"
   runrfile(addr,file,true)
 end
-modem.close(42)
+dispenser.close(42)

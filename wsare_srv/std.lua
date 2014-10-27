@@ -22,17 +22,35 @@
 --OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 --OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-local component = require("component")
 local dispenser = require("dispenser")
-local event = require("event")
+local version,plugins,whome,wdata,wplugins
 
-
-local function getservice(hostname,service)
-  dispenser.open(9261)
-  dispenser.send("broadcast",9261,hostname,service)
-  local _,_,_,_,_,addr,info = event.pull("dispenser",_,_,9261)
-  dispenser.close(9261)
-  return addr,info
+local function getSignal(signal,...)
+  local args = table.pack(...)
+  if signal == "init" then
+    --We dont need a fancy init...
+    version,plugins,whome,wdata,wplugins = ...
+    return "std"
+  elseif signal == "tell" then
+    --This plugin dont needs to respond to tell signals...
+    return "nop"
+  elseif signal == "kill" then
+    --We dont have anything to clean up, so just return nop
+    return "nop"
+  elseif signal == "request" then
+    --Ohhh a request, nomnomnom
+    if args[3] == "file" then
+      --So sir, you want a file?
+      local file,reason = io.open(wdata..args[4])
+      if not file then return "print","std: ERROR while serving file request:",reason end
+      local s = file:read("*all")
+      file:close()
+      return "answer",args[1],s
+    else
+      --Wut? No file?
+      return "nop"
+    end
+  end
 end
 
-return {getservice = getservice}
+return getSignal

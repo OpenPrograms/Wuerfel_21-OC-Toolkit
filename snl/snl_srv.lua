@@ -23,10 +23,9 @@
 --OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 local component = require("component")
+local dispenser = require("dispenser")
 local event = require("event")
 local fs = require("filesystem")
-
-local modem = assert(component.modem,"Modem required!")
 
 local services = {}
 
@@ -46,7 +45,7 @@ end
 local function addService(service,address,name,info)
   table.insert(services,{
     service = service or "nop",
-    address = address or modem.address,
+    address = address or dispenser.hardware.modem.address,
     name = name or hostname,
     info = info})
   return #services
@@ -60,7 +59,7 @@ local function onModemMessage(_,_,client,port,_,name,service)
   if port ~= 9261 then return end
   for k,v in pairs(services) do
     if v.service == service and v.name == name then
-      modem.send(client,9261,v.address,v.info)
+      dispenser.send(client,9261,v.address,v.info)
       return
     end
   end
@@ -68,12 +67,12 @@ end
 
 local function shutdown()
   services = {}
-  event.ignore("modem_message",onModemMessage)
+  event.ignore("dispenser",onModemMessage)
   package.loaded.snl_srv = nil
-  modem.close(9261)
+  dispenser.close(9261)
 end
 
-event.listen("modem_message",onModemMessage)
-modem.open(9261)
+event.listen("dispenser",onModemMessage)
+dispenser.open(9261)
 
 return {hostname = hostname,addService = addService,removeService = removeService,shutdown = shutdown}
