@@ -169,4 +169,4 @@ end
 
 event.listen("modem_message",onMessage)
 
-return {hardware = hardware,checkcycle = checkcycle,checksize = checksize,send=send,open=open,close=close}
+return {hardware = hardware,checkcycle = checkcycle,checksize = checksize,send=send,open=open,close=close,maxPacketSize=maxPacketSize}
