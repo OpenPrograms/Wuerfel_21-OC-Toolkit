@@ -1,0 +1,11 @@
+(Sorry for the hasty manpage)
+This program allows you to have nice color changing lights.
+It will run in the background(but produce tons of lag),
+so you can do some other stuff alsor stuff at the same time!
+
+There are some flags that affect behaviour:
+
+-c - turns off all lights and stopps a running instance of FancyLights
+
+-r - lets the lamps fade in and out based on the top input of the primary
+redstoone component. I usually hook it up to a daylight sensor.
